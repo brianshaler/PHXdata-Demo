@@ -1,4 +1,9 @@
+import processing.video.*;
+
 int w, h;
+
+int videoLength = 100;
+boolean createVideo = false;
 
 int frame = 1;
 
@@ -9,6 +14,8 @@ float max_velocity = 1.9;
 
 int dot_count = 100;
 Dot[] dots;
+
+MovieMaker mm;  // Declare MovieMaker object
 
 void setup () {
   int i;
@@ -31,15 +38,27 @@ void setup () {
     dots[i].orbit(random(1, max_orbit));
     dots[i].velocity(random(min_velocity, max_velocity));
   }
+  
+  if (createVideo) {
+    mm = new MovieMaker(this, w, h, "drawing-"+year()+""+month()+""+day()+"-"+hour()+""+minute()+""+second()+".mov",
+                       30, MovieMaker.VIDEO, MovieMaker.LOSSLESS);
+  }
 }
 
 void draw () {
   int i;
   background(0);
   
+  if (createVideo && frame > videoLength) {
+    mm.finish();
+    return;
+  }
   for (i=0; i<dot_count; i++)
   {
     dots[i].display();
+  }
+  if (createVideo) {
+    mm.addFrame();  // Add window's pixels to movie
   }
   frame++;
 }
